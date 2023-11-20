@@ -1,0 +1,13 @@
+.div{
+    margin: 25px;
+    text-align: center;
+    border: solid black;
+    border-radius: 2px;
+    background-color:blue;
+}
+.body{
+    background-color:lightblue;
+}
+.h1{
+    background-color:red;
+}

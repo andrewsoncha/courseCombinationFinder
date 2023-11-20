@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <title>course combination finder</title>
+        <script src="./courseCode.js"></script>
+        <script src="./class.js"></script>
+        <script>
+            var courseSearchList = [];
+            function searchButtonClick(){
+                let courseName = document.getElementById("coursefield").value;
+                //document.getElementById("coursenameList").innerHTML = courseSearchList.toString();
+                let loadedCourse = readCourse(courseName);
+                console.log(loadedCourse);
+                if(loadedCourse==-1){
+                    console.log("course not found!");
+                    document.getElementById("searchResult").innerHTML = "Course not found!";
+                }
+                else{
+                    console.log("course found!");
+                    console.log(loadedCourse);
+                    courseSearchList.push(loadedCourse);
+                    searchResultStr = `${loadedCourse.code}: ${loadedCourse.name} (Sections:`;
+                    for(let i=0;i<loadedCourse.sectionList.length;i++){
+                        searchResultStr+=loadedCourse.sectionList[i].sectionName;
+                        if(i<loadedCourse.sectionList.length-1){
+                            searchResultStr+=", ";
+                        }
+                    }
+                    searchResultStr+=")";
+                    document.getElementById("searchResult").innerHTML=searchResultStr;
+                }
+                courseListStr = "Course List: [";
+                for(let i=0;i<courseSearchList.length;i++){
+                    courseListStr+=courseSearchList[i].code;
+                    if(i<courseSearchList.length-1){
+                        courseListStr+=", ";
+                    }
+                }
+                courseListStr += "]";
+                document.getElementById("courseNameList").innerHTML = courseListStr;
+            }
+            function resetButtonClick(){
+                courseSearchList = [];
+                document.getElementById("courseNameList").innerHTML = "Course List: []";
+            }
+            function combButtonClick(){
+                console.log("combButtonClick()");
+                let resultingCombs = getAllSectionCombinations(courseSearchList);
+                
+                resultingStr = "Combinations:</br>";
+                for(let i=0;i<resultingCombs.length;i++){
+                    oneLineStr = "[";
+                    for(let j=0;j<resultingCombs[i].length;j++){
+                        oneLineStr+=`${resultingCombs[i][j].course.code}:${resultingCombs[i][j].sectionName}`;
+                        if(j<resultingCombs[i].length-1){
+                            oneLineStr+=", ";
+                        }
+                    }
+                    oneLineStr += "]</br>";
+                    resultingStr += oneLineStr;
+                }
+                console.log(resultingStr);
+                document.getElementById("schedules").innerHTML = resultingStr;
+            }
+        </script>
+        <!--<link rel="stylesheet" href="./styles.css" type="text/css" />-->
+        <style>
+            .h1{
+                color:red;
+            }
+            .p{
+                color:red;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Course Combination Finder!</h1>
+        <br>
+        <div class="divider">
+            <p>Enter the courses you want to take next semester and find out all the possible combination of sections you can take!</p>
+            <p>Enter the code of the courses(ex: 'CSC111')</p>
+            <input id = "coursefield" name="coursename"></input>
+            <script>document.getElementById("coursefield").addEventListener("keypress", function(event){
+                if(event.key==="Enter"){
+                    searchButtonClick();
+                }
+            });</script>
+            <button name="coursesearch" onclick="searchButtonClick()">Search!</button>
+            <button name="coursereset" onclick="resetButtonClick()">Reset</button>
+            <p id="searchResult">Search Result</p>
+            <p id="courseNameList">Course List:</p>
+        </div>
+        <br>
+        <div class="divider">
+            <button name="findCombinations" onclick="combButtonClick()">Find Combinations</button>
+            <p id="schedules"></p>
+            <canvas id="myCanvas" width="200" height="100"></canvas>
+        </div>
+    </body>
+</html>
