@@ -4,6 +4,7 @@
         <script src="./courseCode.js"></script>
         <script src="./class.js"></script>
         <script>
+            var weekdays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
             var courseSearchList = [];
             function searchButtonClick(){
                 let courseName = document.getElementById("coursefield").value;
@@ -17,7 +18,15 @@
                 else{
                     console.log("course found!");
                     console.log(loadedCourse);
-                    courseSearchList.push(loadedCourse);
+                    let alreadyThere = false;
+                    for(let i=0;i<courseSearchList.length;i++){
+                        if(courseSearchList[i].code==loadedCourse.code){
+                            alreadyThere = true;
+                        }
+                    }
+                    if(alreadyThere==false){
+                        courseSearchList.push(loadedCourse);
+                    }
                     searchResultStr = `${loadedCourse.code}: ${loadedCourse.name} (Sections:`;
                     for(let i=0;i<loadedCourse.sectionList.length;i++){
                         searchResultStr+=loadedCourse.sectionList[i].sectionName;
@@ -27,6 +36,7 @@
                     }
                     searchResultStr+=")";
                     document.getElementById("searchResult").innerHTML=searchResultStr;
+                    document.getElementById("coursefield").value = "";
                 }
                 courseListStr = "Course List: [";
                 for(let i=0;i<courseSearchList.length;i++){
@@ -45,8 +55,8 @@
             function combButtonClick(){
                 console.log("combButtonClick()");
                 let resultingCombs = getAllSectionCombinations(courseSearchList);
-                
-                resultingStr = "Combinations:</br>";
+                let resultingStr = "";
+                /*resultingStr = "Combinations:</br>";
                 for(let i=0;i<resultingCombs.length;i++){
                     oneLineStr = "[";
                     for(let j=0;j<resultingCombs[i].length;j++){
@@ -59,10 +69,36 @@
                     resultingStr += oneLineStr;
                 }
                 console.log(resultingStr);
+                document.getElementById("schedules").innerHTML = resultingStr;*/
+                //console.log(drawTable(resultingCombs[0]));
+                //document.getElementById("schedules").innerHTML = drawTable(resultingCombs[0]);
+                for(let i=0;i<resultingCombs.length;i++){
+                    oneLineStr = "[";
+                    for(let j=0;j<resultingCombs[i].length;j++){
+                        oneLineStr+=`${resultingCombs[i][j].course.code}:${resultingCombs[i][j].sectionName}(`;
+                        
+                        possibleDays = "";
+                        for(let k=0;k<7;k++){
+                            if(resultingCombs[i][j].dayStr[k]=='T'){
+                                possibleDays+=weekdays[k]+" ";
+                            }
+                        }
+                        oneLineStr+=possibleDays+(Math.floor(resultingCombs[i][j].beginTime/100)+":"+Math.floor((resultingCombs[i][j].beginTime%100)/10)+resultingCombs[i][j].beginTime%10)+"~"+(Math.floor(resultingCombs[i][j].endTime/100)+":"+Math.floor((resultingCombs[i][j].endTime%100)/10)+resultingCombs[i][j].endTime%10)+")";
+
+                        if(j<resultingCombs[i].length-1){
+                            oneLineStr+=", ";
+                        }
+                    }
+                    oneLineStr += "]</br>";
+                    oneCombStr = oneLineStr+drawTable(resultingCombs[i]);
+                    oneCombStr+="</br>";
+                    console.log(oneCombStr);
+                    resultingStr+=oneCombStr;
+                }
                 document.getElementById("schedules").innerHTML = resultingStr;
             }
         </script>
-        <!--<link rel="stylesheet" href="./styles.css" type="text/css" />-->
+        <link rel="stylesheet" href="./styles.css" type="text/css" />
         <style>
             .h1{
                 color:red;
@@ -74,24 +110,26 @@
     </head>
     <body>
         <h1>Course Combination Finder!</h1>
-        <br>
         <div class="divider">
             <p>Enter the courses you want to take next semester and find out all the possible combination of sections you can take!</p>
             <p>Enter the code of the courses(ex: 'CSC111')</p>
-            <input id = "coursefield" name="coursename"></input>
-            <script>document.getElementById("coursefield").addEventListener("keypress", function(event){
-                if(event.key==="Enter"){
-                    searchButtonClick();
-                }
-            });</script>
-            <button name="coursesearch" onclick="searchButtonClick()">Search!</button>
-            <button name="coursereset" onclick="resetButtonClick()">Reset</button>
-            <p id="searchResult">Search Result</p>
-            <p id="courseNameList">Course List:</p>
+            <div class="horizontal-center">
+                <input id = "coursefield" name="coursename"></input>
+                <script>document.getElementById("coursefield").addEventListener("keypress", function(event){
+                    if(event.key==="Enter"){
+                        searchButtonClick();
+                    }
+                });</script>
+                <button name="coursesearch" onclick="searchButtonClick()">Search!</button>
+                <button name="coursereset" onclick="resetButtonClick()">Reset</button>
+                <p id="searchResult">Search Result</p>
+                <p id="courseNameList">Course List:</p>
+            </div>
         </div>
-        <br>
         <div class="divider">
-            <button name="findCombinations" onclick="combButtonClick()">Find Combinations</button>
+            <div class="horizontal-center">
+                <button name="findCombinations" onclick="combButtonClick()" >Find Combinations</button>
+            </div>
             <p id="schedules"></p>
             <canvas id="myCanvas" width="200" height="100"></canvas>
         </div>

@@ -1,13 +1,32 @@
-.div{
+div{
     margin: 25px;
+    text-align: left;
+    border: solid rgb(246, 246, 246);
+    border-radius: 5px;
+    background-color:beige;
+}
+.horizontal-center{
     text-align: center;
+    border: none;
+}
+body{
+    background-color:white;
+}
+button{
+    margin: 3px;
+    background-color: rgb(121, 213, 243);
+    text-align: center;
+    border-radius: 1px;
+    color: white;
+}
+input{
+    width: 300px;
+    height: 20px;
+}
+table{
     border: solid black;
-    border-radius: 2px;
-    background-color:blue;
 }
-.body{
-    background-color:lightblue;
-}
-.h1{
-    background-color:red;
+th{
+    border-right: solid 1px black;
+    border-left: solid 1px black;
 }

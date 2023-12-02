@@ -1,4 +1,5 @@
 serverURL = 'https://127.0.0.1/';  //change this later probs
+colorList = ["red", "orange", "green", "yellow", "aqua", "purple"];
 
 console.log("class.js linked properly!");
 class Course{
@@ -138,4 +139,43 @@ function getAllSectionCombinations(courseList){
 
     backtrackFunc([], 0);
     return allCombs;
+}
+
+function drawTable(sectionList){
+    console.log("sectionList:"+sectionList.length);
+    for(let i=0;i<sectionList.length;i++){
+        console.log(sectionList[i].beginTime+" "+sectionList[i].endTime);
+    }
+    resultStr = "<table>";
+    resultStr += "<tr><th>Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th><th>Sunday</th></tr>";
+    for(let i=800;i<2400;i+=100){
+        resultStr+="<tr>";
+        resultStr+="<td bgColor=\"gray\">"+(i/100)+":"+((i%100)/10)+(i%10)+" </td>";
+        for(let j=0;j<7;j++){
+            let sectionNum = -1;
+            for(let k=0;k<sectionList.length;k++){
+                if(sectionList[k].dayStr[j]=='T'){
+                    if(i<=sectionList[k].beginTime&&sectionList[k].beginTime<=(i+99)){
+                        sectionNum = k;
+                    }
+                    if(sectionList[k].beginTime<i&&i<sectionList[k].endTime){
+                        sectionNum = k;
+                    }
+                    if(i<=sectionList[k].endTime&&sectionList[k].endTime<=(i+99)){
+                        sectionNum = k;
+                    }
+                }
+                
+            }
+            if(sectionNum>-1){
+                resultStr+="<td bgcolor=\""+colorList[sectionNum]+"\">"+sectionList[sectionNum].course.code+"("+sectionList[sectionNum].sectionName+")"+"</td>";
+            }
+            else{
+                resultStr+="<td bgColor=\"white\"></td>";
+            }
+        }
+        resultStr+="</tr>\n";
+    }
+    resultStr+="</table>";
+    return resultStr;
 }
