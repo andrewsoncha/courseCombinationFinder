@@ -24,7 +24,7 @@
             }
             initTrie();
             function searchButtonClick(){
-                let courseName = document.getElementById("coursefield").value;
+                let courseName = document.getElementById("coursefield").value.toUpperCase();
 
                 let searchResultList = [];
                 trieStartNode.search(courseName, searchResultList);
@@ -77,6 +77,7 @@
                     }
                 }
                 courseListStr += "]";
+                document.getElementById("searchResult").innerHTML = "";
                 document.getElementById("courseNameList").innerHTML = courseListStr;
             }
 
@@ -162,8 +163,11 @@
             <div class="horizontal-center">
                 <button name="findCombinations" onclick="combButtonClick()" >Find Combinations</button>
             </div>
-            <p id="schedules"></p>
-            <canvas id="myCanvas" width="200" height="100"></canvas>
+            <div CLASS="scrollable">
+                <p id="schedules"></p>
+                <canvas id="myCanvas" width="200" height="100"></canvas>
+        
+            </div>
         </div>
     </body>
 </html>

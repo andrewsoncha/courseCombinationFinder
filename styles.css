@@ -30,3 +30,8 @@ th{
     border-right: solid 1px black;
     border-left: solid 1px black;
 }
+.scrollable{
+    margin: 25px;
+    height:600px;
+    overflow-y:scroll;
+}
