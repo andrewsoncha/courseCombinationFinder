@@ -29,6 +29,64 @@ class Section{
     }
 }
 
+class trieNode{
+    constructor(startOrMiddleOrEnd, parent, charValue, stringSoFar){
+        this.startOrMiddleOrEnd = startOrMiddleOrEnd;
+        this.string = stringSoFar+charValue;
+        this.charValue = charValue;
+        this.parent = parent;
+        this.childrenList = [];
+    }
+    add(searchStr){
+        let newNode;
+        if(searchStr==""){
+            newNode = new trieNode("E", this, "", this.string);
+            this.childrenList.push(newNode);
+        }
+        else{
+            let flag = false;
+            for(let i=0;i<this.childrenList.length;i++){
+                if(this.childrenList[i].charValue==searchStr[0]){
+                    this.childrenList[i].add(searchStr.slice(1));
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag==false){
+                newNode = new trieNode("M", this, searchStr[0], this.string);
+                this.childrenList.push(newNode);
+                newNode.add(searchStr.slice(1));
+            }
+        }
+    }
+    search(searchStr, resultList){
+        console.log(this.string+"   searchFunction("+searchStr+")");
+        if(searchStr==""){
+            if(this.startOrMiddleOrEnd=="E"){
+                console.log("Found fitting!"+this.string);
+                resultList.push(this.string);
+            }
+            else{
+                console.log("search searchStr is empty!"+this.string);
+                for(let i=0;i<this.childrenList.length;i++){
+                    console.log(this.childrenList[i].string);
+                    if(this.childrenList[i].startOrMiddleOrEnd=="E"){
+                        console.log("children is end!:"+this.childrenList[i].string);
+                    }
+                    this.childrenList[i].search(searchStr, resultList);
+                }
+            }
+        }
+        else{
+            for(let i=0;i<this.childrenList.length;i++){
+                if(this.childrenList[i].charValue==searchStr[0]){
+                    this.childrenList[i].search(searchStr.slice(1), resultList);
+                }
+            }
+        }
+    }
+}
+
 function readSection(course, sectionID){
     const sectionName = times[sectionID]['sectionName'];
     const beginTime = times[sectionID]['beginTime'];

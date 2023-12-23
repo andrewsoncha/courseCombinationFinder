@@ -6,19 +6,61 @@
         <script>
             var weekdays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
             var courseSearchList = [];
+            var trieStartNode = new trieNode("S", null, "", "");
+            function initTrie(){
+                console.log("trie Test!");
+                let keyList = Object.keys(courseCode);
+                for(let i=0;i<keyList.length;i++){
+                    trieStartNode.add(keyList[i]);
+                }
+
+                for(let i=0;i<trieStartNode.childrenList.length;i++){
+                    console.log(trieStartNode.childrenList[i].charValue);
+                }
+
+                let wriList = [];
+                trieStartNode.search("WRI", wriList);
+                console.log(wriList);
+            }
+            initTrie();
             function searchButtonClick(){
                 let courseName = document.getElementById("coursefield").value;
-                //document.getElementById("coursenameList").innerHTML = courseSearchList.toString();
-                let loadedCourse = readCourse(courseName);
-                console.log(loadedCourse);
-                if(loadedCourse==-1){
-                    console.log("course not found!");
-                    document.getElementById("searchResult").innerHTML = "Course not found!";
+
+                let searchResultList = [];
+                trieStartNode.search(courseName, searchResultList);
+
+                if(searchResultList.length==0){
+                    document.getElementByid("courseNameList").innerHTMl = "Course not found!";
                 }
+
                 else{
-                    console.log("course found!");
-                    console.log(loadedCourse);
-                    let alreadyThere = false;
+                    searchResultStr = "<table>";
+                    for(let i=0;i<searchResultList.length;i++){
+                        searchResultStr+="<tr>";
+                        let loadedCourse = readCourse(searchResultList[i]);
+                        console.log("course found!");
+                        console.log(loadedCourse);
+                        searchResultStr += `<td>${loadedCourse.code}</td><td>${loadedCourse.name}</td><td>Sections:`;
+                        for(let i=0;i<loadedCourse.sectionList.length;i++){
+                            searchResultStr+=loadedCourse.sectionList[i].sectionName;
+                            if(i<loadedCourse.sectionList.length-1){
+                                searchResultStr+=", ";
+                            }
+                        }
+                        searchResultStr+="</td>";
+                        searchResultStr+=`<td><button name=courseAddBtn onclick='courseAddClick(\"${loadedCourse.code}\")'>Add</button></td>`;
+                        searchResultStr+="</tr>";
+                        document.getElementById("searchResult").innerHTML=searchResultStr;
+                        document.getElementById("coursefield").value = "";
+                    }
+                    searchResultStr+="</table>";
+                }
+            }
+
+            function courseAddClick(courseCode){
+                let loadedCourse = readCourse(courseCode);
+                console.log("courseAddClick:"+loadedCourse.code+"   "+loadedCourse.name);
+                let alreadyThere = false;
                     for(let i=0;i<courseSearchList.length;i++){
                         if(courseSearchList[i].code==loadedCourse.code){
                             alreadyThere = true;
@@ -27,17 +69,6 @@
                     if(alreadyThere==false){
                         courseSearchList.push(loadedCourse);
                     }
-                    searchResultStr = `${loadedCourse.code}: ${loadedCourse.name} (Sections:`;
-                    for(let i=0;i<loadedCourse.sectionList.length;i++){
-                        searchResultStr+=loadedCourse.sectionList[i].sectionName;
-                        if(i<loadedCourse.sectionList.length-1){
-                            searchResultStr+=", ";
-                        }
-                    }
-                    searchResultStr+=")";
-                    document.getElementById("searchResult").innerHTML=searchResultStr;
-                    document.getElementById("coursefield").value = "";
-                }
                 courseListStr = "Course List: [";
                 for(let i=0;i<courseSearchList.length;i++){
                     courseListStr+=courseSearchList[i].code;
@@ -48,6 +79,7 @@
                 courseListStr += "]";
                 document.getElementById("courseNameList").innerHTML = courseListStr;
             }
+
             function resetButtonClick(){
                 courseSearchList = [];
                 document.getElementById("courseNameList").innerHTML = "Course List: []";
