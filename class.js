@@ -157,9 +157,10 @@ function sectionOverlaps(section1, section2){
     return false;
 }
 
-function getAllSectionCombinations(courseList){
-    const n = courseList.length;
+function getAllSectionCombinations(possibleSectionList){
+    const n = possibleSectionList.length;
     var allCombs = [];
+    console.log(possibleSectionList);
     //console.log("getAllSectionCombinations n:"+n);
     
     const backtrackFunc = (soFar, idx) => {
@@ -172,11 +173,11 @@ function getAllSectionCombinations(courseList){
         else{
             //console.log("in else!");
             //console.log(`section N:${courseList[idx].sectionList.length}`);
-            for(let i=0;i<courseList[idx].sectionList.length;i++){
+            for(let i=0;i<possibleSectionList[idx].length;i++){
                 let flag = false;
                 //console.log(`for i:${i}   course:${courseList[idx].name}  section:${courseList[idx].sectionList[i]}`);
                 for(let j=0;j<soFar.length;j++){
-                    if(sectionOverlaps(soFar[j], courseList[idx].sectionList[i])){
+                    if(sectionOverlaps(soFar[j], possibleSectionList[idx][i])){
                         flag = true;
                         break;
                     }
@@ -188,7 +189,7 @@ function getAllSectionCombinations(courseList){
                         newSoFar.push(soFar[j]);
                     }
                     //console.log(`idx: ${idx} soFar: ${soFar} newSoFar:${newSoFar}`);
-                    newSoFar.push(courseList[idx].sectionList[i]);
+                    newSoFar.push(possibleSectionList[idx][i]);
                     backtrackFunc(newSoFar, idx+1);
                 }
             }

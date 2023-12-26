@@ -25,6 +25,7 @@ input{
 }
 table{
     border: solid black;
+    border-collapse: collapse;
 }
 th{
     border-right: solid 1px black;

@@ -34,7 +34,7 @@
                 }
 
                 else{
-                    searchResultStr = "<table>";
+                    searchResultStr = "Search Result<br><table>";
                     for(let i=0;i<searchResultList.length;i++){
                         searchResultStr+="<tr>";
                         let loadedCourse = readCourse(searchResultList[i]);
@@ -59,6 +59,17 @@
 
             function courseAddClick(courseCode){
                 let loadedCourse = readCourse(courseCode);
+                let prevCheckedList = [];
+
+                for(let i=0;i<courseSearchList.length;i++){
+                    let courseCheckedList = [];
+                    for(let j=0;j<courseSearchList[i].sectionList.length;j++){
+                        let checkboxId = courseSearchList[i].code+courseSearchList[i].sectionList[j].sectionName;
+                        courseCheckedList.push(document.getElementById(checkboxId).checked)
+                    }
+                    prevCheckedList.push(courseCheckedList);
+                }
+
                 console.log("courseAddClick:"+loadedCourse.code+"   "+loadedCourse.name);
                 let alreadyThere = false;
                     for(let i=0;i<courseSearchList.length;i++){
@@ -67,18 +78,38 @@
                         }
                     }
                     if(alreadyThere==false){
+                        courseTableStr = "Course List:<br><table>";
+                        for(let i=0;i<courseSearchList.length;i++){
+                            courseTableStr += "<tr style=\"border-bottom:solid 3px black\">";
+                            courseTableStr+="<td style=\"border-right:solid 3px\">"+courseSearchList[i].code+"</td>";
+                            let sectionListStr = "";
+                            for(let j=0;j<courseSearchList[i].sectionList.length;j++){
+                                let checkboxName = courseSearchList[i].code+courseSearchList[i].sectionList[j].sectionName;
+                                sectionListStr+=`<input type=\"checkbox\" id=\"${checkboxName}\" name=\"${checkboxName}\" `;
+                                if(prevCheckedList[i][j]==true){
+                                    sectionListStr+="checked";
+                                }
+                                else{
+                                    sectionListStr+="unchecked";
+                                }
+                                sectionListStr+=`/><label for=\"${checkboxName}\">${checkboxName}</label>`;
+                            }
+                            courseTableStr+="<td>"+sectionListStr+"</td></tr>";
+                        }
+                        courseTableStr += "<tr style=\"border-bottom:solid 3px black\">";
+                        courseTableStr+="<td style=\"border-right:solid 3px\">"+loadedCourse.code+"</td>";
+                        courseTableStr+="<td>";
+                        for(let i=0;i<loadedCourse.sectionList.length;i++){
+                            let checkboxName = loadedCourse.code+loadedCourse.sectionList[i].sectionName;
+                            courseTableStr +=`<input type=\"checkbox\" id=\"${checkboxName}\" name=\"${checkboxName}\" checked/><label for=\"${checkboxName}\">${checkboxName}</label>`;
+                        }
+                        courseTableStr+="</td></tr>";
                         courseSearchList.push(loadedCourse);
+                        courseTableStr+="</table>";
+                        document.getElementById("courseNameList").innerHTML = courseTableStr;
+                        
                     }
-                courseListStr = "Course List: [";
-                for(let i=0;i<courseSearchList.length;i++){
-                    courseListStr+=courseSearchList[i].code;
-                    if(i<courseSearchList.length-1){
-                        courseListStr+=", ";
-                    }
-                }
-                courseListStr += "]";
-                document.getElementById("searchResult").innerHTML = "";
-                document.getElementById("courseNameList").innerHTML = courseListStr;
+                document.getElementById("searchResult").innerHTML = "Search Result";
             }
 
             function resetButtonClick(){
@@ -87,7 +118,20 @@
             }
             function combButtonClick(){
                 console.log("combButtonClick()");
-                let resultingCombs = getAllSectionCombinations(courseSearchList);
+                let possibleSectionsList = [];
+                for(let i=0;i<courseSearchList.length;i++){
+                    let courseSectionsList = [];
+                    for(let j=0;j<courseSearchList[i].sectionList.length;j++){
+                        let checkboxId = courseSearchList[i].code+courseSearchList[i].sectionList[j].sectionName;
+                        console.log(checkboxId);
+                        if(document.getElementById(checkboxId).checked){
+                            console.log(checkboxId);
+                            courseSectionsList.push(courseSearchList[i].sectionList[j]);
+                        }
+                    }
+                    possibleSectionsList.push(courseSectionsList);
+                }
+                let resultingCombs = getAllSectionCombinations(possibleSectionsList);
                 let resultingStr = "";
                 /*resultingStr = "Combinations:</br>";
                 for(let i=0;i<resultingCombs.length;i++){
